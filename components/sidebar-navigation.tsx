@@ -236,52 +236,40 @@ export function SidebarNavigation() {
   return (
     <>
       {/* Mobile menu button */}
-      <Button variant="ghost" size="icon" className="md:hidden fixed top-3 left-3 z-50" onClick={toggleMobileMenu}>
-        {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="md:hidden fixed top-3 left-3 z-50 rounded-full hover:bg-[#0F4342]/10" 
+        onClick={toggleMobileMenu}
+      >
+        {isMobileMenuOpen ? <X className="h-6 w-6 text-[#0F4342]" /> : <Menu className="h-6 w-6 text-[#0F4342]" />}
       </Button>
 
       {/* Mobile navigation */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden">
-          <div className="fixed inset-y-0 left-0 z-50 w-3/4 max-w-xs bg-white shadow-lg">
-            <div className="flex h-16 items-center border-b px-4">
+        <div className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm md:hidden">
+          <div className="fixed inset-y-0 left-0 z-50 w-3/4 max-w-xs bg-white shadow-2xl">
+            <div className="flex h-16 items-center border-b border-[#0F4342]/10 px-4">
               <div className="font-semibold text-[#0F4342]">{dashboardTitle}</div>
             </div>
             <ScrollArea className="h-[calc(100vh-4rem)]">
               <div className="px-3 py-2">
-                <nav className="grid gap-1">
-                  {navItems.map((item, index) => {
-                    const isActive = pathname === item.href
-                    return (
-                      <div key={index}>
-                        {item.onClick ? (
-                          <button
-                            onClick={item.onClick}
-                            className={cn(
-                              "group flex w-full items-center rounded-md px-3 py-2 text-sm font-medium",
-                              isActive ? "bg-[#0F4342] text-white" : "text-gray-700 hover:bg-gray-100",
-                            )}
-                          >
-                            <item.icon className="mr-3 h-5 w-5" />
-                            <span>{item.title}</span>
-                          </button>
-                        ) : (
-                          <Link
-                            href={item.href}
-                            className={cn(
-                              "group flex w-full items-center rounded-md px-3 py-2 text-sm font-medium",
-                              isActive ? "bg-[#0F4342] text-white" : "text-gray-700 hover:bg-gray-100",
-                            )}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            <item.icon className="mr-3 h-5 w-5" />
-                            <span>{item.title}</span>
-                          </Link>
-                        )}
-                      </div>
-                    )
-                  })}
-                </nav>
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+                      pathname === item.href
+                        ? "bg-[#0F4342] text-white"
+                        : "text-[#0F4342] hover:bg-[#0F4342]/10"
+                    )}
+                    onClick={item.onClick}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.title}
+                  </Link>
+                ))}
               </div>
             </ScrollArea>
           </div>
@@ -289,57 +277,41 @@ export function SidebarNavigation() {
       )}
 
       {/* Desktop navigation */}
-      <div
-        className={cn(
-          "hidden md:flex h-screen border-r flex-col transition-all duration-300",
-          isCollapsed ? "w-[70px]" : "w-[240px]",
-        )}
-      >
-        <div className="flex h-16 items-center border-b px-4">
-          {!isCollapsed && <div className="font-semibold text-[#0F4342]">{dashboardTitle}</div>}
+      <div className={cn(
+        "hidden md:block fixed top-0 left-0 h-screen w-64 bg-white shadow-lg transition-all duration-300",
+        isCollapsed && "w-20"
+      )}>
+        <div className="flex h-16 items-center justify-between border-b border-[#0F4342]/10 px-4">
+          <div className="font-semibold text-[#0F4342]">
+            {!isCollapsed && dashboardTitle}
+          </div>
           <Button
             variant="ghost"
             size="icon"
-            className={cn("ml-auto", isCollapsed && "mx-auto")}
+            className="rounded-full hover:bg-[#0F4342]/10"
             onClick={toggleSidebar}
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-5 w-5 text-[#0F4342]" />
           </Button>
         </div>
-        <ScrollArea className="flex-1">
+        <ScrollArea className="h-[calc(100vh-4rem)]">
           <div className="px-3 py-2">
-            <nav className="grid gap-1">
-              {navItems.map((item, index) => {
-                const isActive = pathname === item.href
-                return (
-                  <div key={index}>
-                    {item.onClick ? (
-                      <button
-                        onClick={item.onClick}
-                        className={cn(
-                          "group flex items-center rounded-md px-3 py-2 text-sm font-medium",
-                          isActive ? "bg-[#0F4342] text-white" : "text-gray-700 hover:bg-gray-100",
-                        )}
-                      >
-                        <item.icon className="h-5 w-5" />
-                        {!isCollapsed && <span className="ml-3">{item.title}</span>}
-                      </button>
-                    ) : (
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          "group flex items-center rounded-md px-3 py-2 text-sm font-medium",
-                          isActive ? "bg-[#0F4342] text-white" : "text-gray-700 hover:bg-gray-100",
-                        )}
-                      >
-                        <item.icon className="h-5 w-5" />
-                        {!isCollapsed && <span className="ml-3">{item.title}</span>}
-                      </Link>
-                    )}
-                  </div>
-                )
-              })}
-            </nav>
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all mb-1",
+                  pathname === item.href
+                    ? "bg-[#0F4342] text-white shadow-md"
+                    : "text-[#0F4342] hover:bg-[#0F4342]/10"
+                )}
+                onClick={item.onClick}
+              >
+                <item.icon className={cn("h-4 w-4", isCollapsed && "mr-0")} />
+                {!isCollapsed && item.title}
+              </Link>
+            ))}
           </div>
         </ScrollArea>
       </div>

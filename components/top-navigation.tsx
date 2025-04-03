@@ -16,10 +16,16 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { useToast } from "@/components/ui/use-toast"
 import { Badge } from "@/components/ui/badge"
 
-export function TopNavigation() {
+interface TopNavigationProps {
+  userName: string
+  userRole: string
+  notificationCount: number
+}
+
+export function TopNavigation({ userName, userRole, notificationCount: initialNotificationCount }: TopNavigationProps) {
   const router = useRouter()
   const { toast } = useToast()
-  const [notificationCount, setNotificationCount] = useState(3)
+  const [notificationCount, setNotificationCount] = useState(initialNotificationCount)
   const [showNotifications, setShowNotifications] = useState(false)
   const [showSettingsDialog, setShowSettingsDialog] = useState(false)
   const [showHelpDialog, setShowHelpDialog] = useState(false)
@@ -90,47 +96,53 @@ export function TopNavigation() {
   }
 
   return (
-    <div className="flex h-16 items-center border-b px-4">
+    <div className="sticky top-0 z-40 flex h-16 items-center border-b border-[#0F4342]/10 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 px-4 shadow-sm">
       <div className="ml-auto flex items-center space-x-4">
         {/* Notifications */}
         <div className="relative">
-          <Button variant="ghost" size="icon" onClick={handleNotificationClick} aria-label="Notifications">
-            <Bell className="h-5 w-5" />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleNotificationClick} 
+            aria-label="Notifications"
+            className="rounded-full hover:bg-[#0F4342]/10"
+          >
+            <Bell className="h-5 w-5 text-[#0F4342]" />
             {notificationCount > 0 && (
-              <Badge className="absolute -right-1 -top-1 h-5 w-5 p-0 flex items-center justify-center bg-red-500">
+              <Badge className="absolute -right-1 -top-1 h-5 w-5 p-0 flex items-center justify-center bg-[#0F4342]">
                 {notificationCount}
               </Badge>
             )}
           </Button>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 z-50 overflow-hidden rounded-md border bg-white shadow-md">
-              <div className="p-3 border-b">
-                <h3 className="text-sm font-medium">Notifications</h3>
+            <div className="absolute right-0 mt-2 w-80 z-50 overflow-hidden rounded-lg border border-[#0F4342]/10 bg-white shadow-lg">
+              <div className="p-3 border-b border-[#0F4342]/10">
+                <h3 className="text-sm font-medium text-[#0F4342]">Notifications</h3>
               </div>
               {notifications.length > 0 ? (
                 <div className="max-h-80 overflow-y-auto">
                   {notifications.map((notification) => (
-                    <div key={notification.id} className="p-3 border-b hover:bg-gray-50">
+                    <div key={notification.id} className="p-3 border-b border-[#0F4342]/10 hover:bg-[#0F4342]/5 transition-colors">
                       <div className="flex justify-between">
-                        <h4 className="text-sm font-medium">{notification.title}</h4>
+                        <h4 className="text-sm font-medium text-[#0F4342]">{notification.title}</h4>
                         <button
-                          className="text-gray-400 hover:text-gray-500 text-xs"
+                          className="text-[#0F4342]/70 hover:text-[#0F4342] text-xs transition-colors"
                           onClick={() => clearNotification(notification.id)}
                         >
                           Clear
                         </button>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">{notification.description}</p>
-                      <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
+                      <p className="text-xs text-[#0F4342]/70 mt-1">{notification.description}</p>
+                      <p className="text-xs text-[#0F4342]/50 mt-1">{notification.time}</p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="p-3 text-center text-sm text-gray-500">No notifications</div>
+                <div className="p-3 text-center text-sm text-[#0F4342]/70">No notifications</div>
               )}
-              <div className="p-2 border-t bg-gray-50">
-                <Button variant="ghost" size="sm" className="w-full text-xs">
+              <div className="p-2 border-t border-[#0F4342]/10 bg-[#0F4342]/5">
+                <Button variant="ghost" size="sm" className="w-full text-xs text-[#0F4342] hover:bg-[#0F4342]/10">
                   View all notifications
                 </Button>
               </div>
@@ -139,38 +151,52 @@ export function TopNavigation() {
         </div>
 
         {/* Help */}
-        <Button variant="ghost" size="icon" onClick={handleHelpClick} aria-label="Help">
-          <HelpCircle className="h-5 w-5" />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={handleHelpClick} 
+          aria-label="Help"
+          className="rounded-full hover:bg-[#0F4342]/10"
+        >
+          <HelpCircle className="h-5 w-5 text-[#0F4342]" />
         </Button>
 
         {/* Settings */}
-        <Button variant="ghost" size="icon" onClick={handleSettingsClick} aria-label="Settings">
-          <Settings className="h-5 w-5" />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={handleSettingsClick} 
+          aria-label="Settings"
+          className="rounded-full hover:bg-[#0F4342]/10"
+        >
+          <Settings className="h-5 w-5 text-[#0F4342]" />
         </Button>
 
         {/* User dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="relative h-8 rounded-full">
+            <Button variant="ghost" size="sm" className="relative h-8 rounded-full hover:bg-[#0F4342]/10">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-[#0F4342] text-white flex items-center justify-center">JS</div>
-                <ChevronDown className="h-4 w-4" />
+                <div className="h-8 w-8 rounded-full bg-[#0F4342] text-white flex items-center justify-center">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+                <ChevronDown className="h-4 w-4 text-[#0F4342]" />
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>John Smith</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleProfileClick}>
+          <DropdownMenuContent align="end" className="w-56 rounded-lg border-[#0F4342]/10">
+            <DropdownMenuLabel className="text-[#0F4342]">{userName}</DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-[#0F4342]/10" />
+            <DropdownMenuItem onClick={handleProfileClick} className="text-[#0F4342] focus:bg-[#0F4342]/10">
               <User className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleSettingsClick}>
+            <DropdownMenuItem onClick={handleSettingsClick} className="text-[#0F4342] focus:bg-[#0F4342]/10">
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuSeparator className="bg-[#0F4342]/10" />
+            <DropdownMenuItem onClick={handleLogout} className="text-[#0F4342] focus:bg-[#0F4342]/10">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Logout</span>
             </DropdownMenuItem>
@@ -180,37 +206,39 @@ export function TopNavigation() {
 
       {/* Settings Dialog */}
       <Dialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog}>
-        <DialogContent>
+        <DialogContent className="rounded-lg">
           <DialogHeader>
-            <DialogTitle>Settings</DialogTitle>
-            <DialogDescription>Configure your account and application settings</DialogDescription>
+            <DialogTitle className="text-[#0F4342]">Settings</DialogTitle>
+            <DialogDescription className="text-[#0F4342]/70">
+              Configure your account and application settings
+            </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div>
-              <h3 className="text-sm font-medium mb-2">Notification Preferences</h3>
+              <h3 className="text-sm font-medium mb-2 text-[#0F4342]">Notification Preferences</h3>
               <div className="flex items-center justify-between">
-                <span className="text-sm">Email notifications</span>
-                <input type="checkbox" defaultChecked />
+                <span className="text-sm text-[#0F4342]/70">Email notifications</span>
+                <input type="checkbox" defaultChecked className="rounded border-[#0F4342]/20" />
               </div>
               <div className="flex items-center justify-between mt-2">
-                <span className="text-sm">Push notifications</span>
-                <input type="checkbox" defaultChecked />
+                <span className="text-sm text-[#0F4342]/70">Push notifications</span>
+                <input type="checkbox" defaultChecked className="rounded border-[#0F4342]/20" />
               </div>
               <div className="flex items-center justify-between mt-2">
-                <span className="text-sm">SMS notifications</span>
-                <input type="checkbox" />
+                <span className="text-sm text-[#0F4342]/70">SMS notifications</span>
+                <input type="checkbox" className="rounded border-[#0F4342]/20" />
               </div>
             </div>
-            <div className="pt-4 border-t">
-              <h3 className="text-sm font-medium mb-2">Theme Preferences</h3>
+            <div className="pt-4 border-t border-[#0F4342]/10">
+              <h3 className="text-sm font-medium mb-2 text-[#0F4342]">Theme Preferences</h3>
               <div className="flex items-center justify-between">
-                <span className="text-sm">Dark mode</span>
-                <input type="checkbox" />
+                <span className="text-sm text-[#0F4342]/70">Dark mode</span>
+                <input type="checkbox" className="rounded border-[#0F4342]/20" />
               </div>
             </div>
-            <div className="pt-4 border-t">
-              <h3 className="text-sm font-medium mb-2">Language</h3>
-              <select className="w-full border rounded p-2 text-sm">
+            <div className="pt-4 border-t border-[#0F4342]/10">
+              <h3 className="text-sm font-medium mb-2 text-[#0F4342]">Language</h3>
+              <select className="w-full border rounded-lg p-2 text-sm border-[#0F4342]/20 text-[#0F4342]">
                 <option>English</option>
                 <option>Spanish</option>
                 <option>French</option>
@@ -218,8 +246,12 @@ export function TopNavigation() {
               </select>
             </div>
           </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setShowSettingsDialog(false)}>
+          <div className="flex justify-end space-x-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowSettingsDialog(false)}
+              className="rounded-lg border-[#0F4342]/20 text-[#0F4342] hover:bg-[#0F4342]/10"
+            >
               Cancel
             </Button>
             <Button
@@ -230,6 +262,7 @@ export function TopNavigation() {
                 })
                 setShowSettingsDialog(false)
               }}
+              className="rounded-lg bg-[#0F4342] text-white hover:bg-[#0F4342]/90"
             >
               Save Changes
             </Button>
@@ -239,31 +272,37 @@ export function TopNavigation() {
 
       {/* Help Dialog */}
       <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
-        <DialogContent>
+        <DialogContent className="rounded-lg">
           <DialogHeader>
-            <DialogTitle>Help & Support</DialogTitle>
-            <DialogDescription>Need assistance? We're here to help!</DialogDescription>
+            <DialogTitle className="text-[#0F4342]">Help & Support</DialogTitle>
+            <DialogDescription className="text-[#0F4342]/70">
+              Need assistance? We're here to help!
+            </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="rounded-lg border p-3 hover:bg-gray-50 cursor-pointer">
-              <h3 className="font-medium text-sm">Documentation</h3>
-              <p className="text-xs text-gray-500 mt-1">Browse our comprehensive documentation</p>
+          <div className="space-y-2">
+            <div className="rounded-lg border border-[#0F4342]/20 p-3 hover:bg-[#0F4342]/5 cursor-pointer transition-colors">
+              <h3 className="font-medium text-sm text-[#0F4342]">Documentation</h3>
+              <p className="text-xs text-[#0F4342]/70 mt-1">Browse our comprehensive documentation</p>
             </div>
-            <div className="rounded-lg border p-3 hover:bg-gray-50 cursor-pointer">
-              <h3 className="font-medium text-sm">Video Tutorials</h3>
-              <p className="text-xs text-gray-500 mt-1">Learn through our step-by-step video guides</p>
+            <div className="rounded-lg border border-[#0F4342]/20 p-3 hover:bg-[#0F4342]/5 cursor-pointer transition-colors">
+              <h3 className="font-medium text-sm text-[#0F4342]">Video Tutorials</h3>
+              <p className="text-xs text-[#0F4342]/70 mt-1">Learn through our step-by-step video guides</p>
             </div>
-            <div className="rounded-lg border p-3 hover:bg-gray-50 cursor-pointer">
-              <h3 className="font-medium text-sm">Contact Support</h3>
-              <p className="text-xs text-gray-500 mt-1">Reach out to our support team</p>
+            <div className="rounded-lg border border-[#0F4342]/20 p-3 hover:bg-[#0F4342]/5 cursor-pointer transition-colors">
+              <h3 className="font-medium text-sm text-[#0F4342]">Contact Support</h3>
+              <p className="text-xs text-[#0F4342]/70 mt-1">Reach out to our support team</p>
             </div>
-            <div className="rounded-lg border p-3 hover:bg-gray-50 cursor-pointer">
-              <h3 className="font-medium text-sm">FAQs</h3>
-              <p className="text-xs text-gray-500 mt-1">Find answers to commonly asked questions</p>
+            <div className="rounded-lg border border-[#0F4342]/20 p-3 hover:bg-[#0F4342]/5 cursor-pointer transition-colors">
+              <h3 className="font-medium text-sm text-[#0F4342]">FAQs</h3>
+              <p className="text-xs text-[#0F4342]/70 mt-1">Find answers to commonly asked questions</p>
             </div>
           </div>
           <div className="flex justify-end">
-            <Button variant="outline" onClick={() => setShowHelpDialog(false)}>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowHelpDialog(false)}
+              className="rounded-lg border-[#0F4342]/20 text-[#0F4342] hover:bg-[#0F4342]/10"
+            >
               Close
             </Button>
           </div>

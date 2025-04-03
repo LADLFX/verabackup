@@ -16,15 +16,22 @@ interface AIChatAssistantProps {
 export function AIChatAssistant({
   initialMessage = "Hello! I'm Vera, your AI assistant. How can I help you today?",
 }: AIChatAssistantProps) {
-  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string; timestamp?: string }[]>([
-    { role: "assistant", content: initialMessage, timestamp: new Date().toLocaleTimeString() },
-  ])
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string; timestamp?: string }[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isVoiceMode, setIsVoiceMode] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
+
+  // Initialize messages with timestamp only on client side
+  useEffect(() => {
+    if (messages.length === 0) {
+      setMessages([
+        { role: "assistant", content: initialMessage, timestamp: new Date().toLocaleTimeString() },
+      ])
+    }
+  }, [initialMessage])
 
   // Auto-scroll to the latest message
   useEffect(() => {
